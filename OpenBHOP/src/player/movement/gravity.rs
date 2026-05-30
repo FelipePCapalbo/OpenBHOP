@@ -26,10 +26,12 @@ impl VerticalPhysics {
         }
     }
 
-    pub fn trigger_jump(&mut self) {
+    pub fn trigger_jump(&mut self) -> bool {
         if self.is_grounded {
             self.speed_y = JUMP_FORCE;
             self.is_grounded = false;
+            true
+        } else {
+            false
         }
-    }
-}
+    }}

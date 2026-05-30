@@ -1,26 +1,30 @@
 use macroquad::prelude::*;
+use macroquad::audio::Sound;
 use crate::input::InputService;
 use crate::player::Player;
-use crate::world::World;
+use crate::world::Environment;
+use crate::hud::Hud;
 
 pub struct GameState {
     pub player: Player,
-    pub world: World,
+    pub environment: Environment,
     pub input: InputService,
+    pub hud: Hud,
 }
 
 impl GameState {
     pub fn new() -> Self {
         Self {
             player: Player::new(),
-            world: World::new(),
+            environment: Environment::new(),
             input: InputService::new(),
+            hud: Hud::new(),
         }
     }
 
-    pub fn update(&mut self, delta_time: f32) {
+    pub fn update(&mut self, delta_time: f32, jump_sound: &Sound) {
         self.input.handle_input(delta_time);
-        self.player.update(&self.input, delta_time);
+        self.player.update(&self.input, delta_time, jump_sound);
     }
 
     pub fn draw(&self) {
@@ -33,25 +37,13 @@ impl GameState {
             ..Default::default()
         });
 
-        self.world.draw();
+        self.environment.draw();
 
         set_default_camera();
-        self.draw_hud();
-    }
-
-    fn draw_hud(&self) {
-        draw_text("Controls: WASD + MOUSE; SPACE to Jump; TAB to unlock mouse", 10.0, 20.0, 22.0, BLACK);
         
-        let pos_text = format!(
-            "XYZ: {:.2}, {:.2}, {:.2}", 
-            self.player.kinematics.position.x, 
-            self.player.kinematics.position.y, 
-            self.player.kinematics.position.z
+        self.hud.draw(
+            self.player.kinematics.position, 
+            self.player.kinematics.telemetry.current_speed
         );
-        draw_text(&pos_text, 10.0, 45.0, 22.0, DARKGRAY);
-
-        let speed_text = format!("Speed: {:.1} u/s", self.player.kinematics.telemetry.current_speed);
-        let speed_color = if self.player.kinematics.telemetry.current_speed > 0.1 { ORANGE } else { GRAY };
-        draw_text(&speed_text, 10.0, 75.0, 26.0, speed_color);
     }
 }

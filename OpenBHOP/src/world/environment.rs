@@ -1,9 +1,9 @@
 use macroquad::prelude::*;
 
-pub struct World {
+pub struct Environment {
 }
 
-impl World {
+impl Environment {
     pub fn new() -> Self {
         Self {}
     }

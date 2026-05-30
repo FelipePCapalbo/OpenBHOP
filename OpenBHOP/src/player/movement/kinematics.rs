@@ -41,7 +41,7 @@ impl Kinematics {
         );
     }
 
-    pub fn jump(&mut self) {
-        self.vertical_physics.trigger_jump();
+    pub fn jump(&mut self) -> bool {
+        self.vertical_physics.trigger_jump()
     }
 }

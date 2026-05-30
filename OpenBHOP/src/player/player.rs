@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use macroquad::audio::{play_sound_once, Sound};
 use crate::input::InputService;
 
 use super::camera::FirstPersonCamera;
@@ -17,11 +18,13 @@ impl Player {
         }
     }
 
-    pub fn update(&mut self, input: &InputService, delta_time: f32) {
+    pub fn update(&mut self, input: &InputService, delta_time: f32, jump_sound: &Sound) {
         self.camera.update(input.mouse_delta);
 
         if is_key_pressed(KeyCode::Space) {
-            self.kinematics.jump();
+            if self.kinematics.jump() {
+                play_sound_once(jump_sound);
+            }
         }
 
         self.kinematics.apply_movement(input.movement, self.camera.front, delta_time);
