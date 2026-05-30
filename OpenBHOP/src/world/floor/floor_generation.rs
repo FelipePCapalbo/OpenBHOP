@@ -2,12 +2,11 @@ use macroquad::prelude::*;
 use std::collections::HashSet;
 use std::fs::{create_dir_all, File, OpenOptions};
 use std::io::{Read, Write};
+use crate::config::{CELL_SIZE, VISITED_CELLS_FILE};
 
 // Constantes para dimensionar a geração e otimização do chão
-const CELL_SIZE: f32 = 2.0;
 const CHUNK_SIZE: i32 = 8;
 const CHUNK_VIEW_RADIUS: i32 = 3;
-const PERSISTENCE_FILE: &str = "bin/floor_history.bin";
 
 pub struct FloorGenerator {
     // Conjunto de coordenadas (cx, cz) dos chunks atualmente ativos na memória
@@ -21,7 +20,7 @@ impl FloorGenerator {
         let mut visited_cells = HashSet::new();
 
         // Carrega as coordenadas visitadas do histórico binário
-        if let Ok(mut file) = File::open(PERSISTENCE_FILE) {
+        if let Ok(mut file) = File::open(VISITED_CELLS_FILE) {
             let mut buffer = [0u8; 8];
             while file.read_exact(&mut buffer).is_ok() {
                 let cell_x = i32::from_le_bytes([buffer[0], buffer[1], buffer[2], buffer[3]]);
@@ -111,7 +110,7 @@ impl FloorGenerator {
         if let Ok(mut file) = OpenOptions::new()
             .create(true)
             .append(true)
-            .open(PERSISTENCE_FILE)
+            .open(VISITED_CELLS_FILE)
         {
             let mut buffer = [0u8; 8];
             buffer[0..4].copy_from_slice(&cell.0.to_le_bytes());

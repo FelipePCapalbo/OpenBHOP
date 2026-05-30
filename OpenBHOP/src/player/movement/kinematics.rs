@@ -4,6 +4,7 @@ use super::locomotion::Locomotion;
 use super::vertical_physics::VerticalPhysics;
 use super::jump::JumpController;
 use super::telemetry::Telemetry;
+use crate::config::BHOP_WINDOW_MS;
 
 pub struct Kinematics {
     pub position: Vec3,
@@ -13,6 +14,10 @@ pub struct Kinematics {
     pub vertical_physics: VerticalPhysics,
     pub jump_controller: JumpController,
     pub telemetry: Telemetry,
+    
+    // Variáveis de controle para o Bunny Hopping (BHOP)
+    pub bhop_timer: f32,                       // Contador regressivo de tolerância para o pulo de preservação (em segundos)
+    pub saved_horizontal_velocity: Vec3,       // Velocidade horizontal preservada antes de pousar
 }
 
 impl Kinematics {
@@ -25,13 +30,43 @@ impl Kinematics {
             vertical_physics: VerticalPhysics::new(),
             jump_controller: JumpController::new(),
             telemetry: Telemetry::new(),
+            bhop_timer: 0.0,
+            saved_horizontal_velocity: Vec3::ZERO,
         }
     }
 
     pub fn apply_movement(&mut self, input_movement: Vec3, camera_front: Vec3, delta_time: f32) {
-        let displacement = self.locomotion.apply_horizontal_input(&mut self.position, input_movement, camera_front);
+        // Decrementa o timer do Bunny Hop se estiver ativo
+        if self.bhop_timer > 0.0 {
+            self.bhop_timer -= delta_time;
+            if self.bhop_timer < 0.0 {
+                self.bhop_timer = 0.0;
+            }
+        }
+
+        // Guarda o estado de grounded do frame anterior antes do processamento físico do frame atual
+        let was_grounded_prev = self.is_grounded;
+
+        // Processa a movimentação horizontal (aceleração, atrito e integração de posição)
+        let displacement = self.locomotion.apply_horizontal_input(
+            &mut self.position,
+            &mut self.velocity,
+            input_movement,
+            camera_front,
+            self.is_grounded,
+            delta_time,
+        );
         
+        // Aplica a gravidade e detecta colisão/aterrissagem com o chão
         self.vertical_physics.apply_gravity(&mut self.position, &mut self.velocity, &mut self.is_grounded);
+
+        // Detecta se o jogador acabou de aterrissar (estava no ar e agora está no chão)
+        if !was_grounded_prev && self.is_grounded {
+            // Salva a velocidade horizontal mantida no ar imediatamente antes do impacto com o chão
+            self.saved_horizontal_velocity = vec3(self.velocity.x, 0.0, self.velocity.z);
+            // Inicia o timer da janela de tolerância de BHOP (convertendo milissegundos para segundos)
+            self.bhop_timer = BHOP_WINDOW_MS / 1000.0;
+        }
 
         let has_input = input_movement != Vec3::ZERO;
         self.telemetry.update_speed(
@@ -44,6 +79,16 @@ impl Kinematics {
     }
 
     pub fn jump(&mut self) -> bool {
-        self.jump_controller.trigger_jump(&mut self.velocity, &mut self.is_grounded)
+        if self.jump_controller.trigger_jump(&mut self.velocity, &mut self.is_grounded) {
+            // Se o pulo ocorrer dentro da janela de tolerância (bhop_timer ativo), preservamos a velocidade horizontal salva
+            if self.bhop_timer > 0.0 {
+                self.velocity.x = self.saved_horizontal_velocity.x;
+                self.velocity.z = self.saved_horizontal_velocity.z;
+                self.bhop_timer = 0.0; // Consome o timer para evitar múltiplas preservações no mesmo ciclo
+            }
+            true
+        } else {
+            false
+        }
     }
 }

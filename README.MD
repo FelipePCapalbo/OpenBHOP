@@ -1,30 +1,31 @@
-Reference: https://github.com/not-fl3/macroquad/blob/master/examples/first_person.rs
+First Person Reference: https://github.com/not-fl3/macroquad/blob/master/examples/first_person.rs
+Physics Reference: https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/game/shared/gamemovement.cpp
 
 ---
 
 ```text
 src/
-├── main.rs      # Application entry point and lifecycle coordinator.
-├── config.rs    # Global constants (physics variables and window settings).
-├── input.rs     # InputService (abstracts mouse delta and keyboard axis).
-├── audio.rs     # AudioService (loads and plays pitch-varied jump sounds).
-├── game.rs      # Global GameState manager (orchestrates update and draw passes).
-├── world/       # World map and environment definitions.
-│   ├── mod.rs          # Module index and path exports.
-│   └── environment.rs  # Environment geometry (renders grids and background).
-├── hud/         # Head-Up Display domain.
-│   ├── mod.rs          # Module index and path exports.
-│   └── hud.rs          # Renders on-screen statistics (telemetry speed and position).
-└── player/      # Encapsulated player domain.
-    ├── mod.rs             # Module index and path exports.
-    ├── player.rs          # Player entity orchestrator.
-    ├── camera.rs          # First-person camera math (yaw, pitch, vectors).
-    └── movement/          # Segregated physics and kinematics sub-domain.
-        ├── mod.rs         # Module index and path exports.
-        ├── kinematics.rs  # Movement orchestrator and spatial state syncer.
-        ├── locomotion.rs  # XZ-plane translation and input mapping.
-        ├── telemetry.rs   # Speed scalar calculation and telemetry metrics.
-        └── jump/          # Segregated vertical physics and jump controls.
+├── main.rs                 # Application entry point and lifecycle coordinator.
+├── config.rs               # Global constants (physics variables and window settings).
+├── input.rs                # InputService (abstracts mouse delta and keyboard axis).
+├── audio.rs                # AudioService (loads and plays pitch-varied jump sounds).
+├── game.rs                 # Global GameState manager (orchestrates update and draw passes).
+├── world/                  # World map and environment definitions.
+│   ├── mod.rs              # Module index and path exports.
+│   └── environment.rs      # Environment geometry (renders grids and background).
+├── hud/                    # Head-Up Display domain.
+│   ├── mod.rs              # Module index and path exports.
+│   └── hud.rs              # Renders on-screen statistics (telemetry speed and position).
+└── player/                 # Encapsulated player domain.
+    ├── mod.rs              # Module index and path exports.
+    ├── player.rs           # Player entity orchestrator.
+    ├── camera.rs           # First-person camera math (yaw, pitch, vectors).
+    └── movement/           # Segregated physics and kinematics sub-domain.
+        ├── mod.rs          # Module index and path exports.
+        ├── kinematics.rs   # Movement orchestrator and spatial state syncer.
+        ├── locomotion.rs   # XZ-plane translation and input mapping.
+        ├── telemetry.rs    # Speed scalar calculation and telemetry metrics.
+        └── jump/           # Segregated vertical physics and jump controls.
             ├── mod.rs      # Module index and path exports.
             ├── gravity.rs  # Vertical physics, gravity, and floor collisions.
             └── jump.rs     # Jump trigger logic.

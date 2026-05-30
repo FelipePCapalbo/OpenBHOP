@@ -36,6 +36,7 @@ impl GameState {
         }
 
         self.environment.update(self.player.kinematics.position);
+        self.hud.update(self.player.kinematics.position);
     }
 
     pub fn draw(&self) {
