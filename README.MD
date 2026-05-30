@@ -1,5 +1,13 @@
 First Person Reference: https://github.com/not-fl3/macroquad/blob/master/examples/first_person.rs
+
 Physics Reference: https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/game/shared/gamemovement.cpp
+
+SoundTrack Reference: 
+```text
+•°CYBORG SHARKS°•
+- Track_1_birds.wav
+- Track_2_amenbreak.wav
+```
 
 ---
 
