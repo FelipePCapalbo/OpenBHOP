@@ -13,6 +13,7 @@ pub enum PlayerAction {
 pub struct Player {
     pub camera: FirstPersonCamera,
     pub kinematics: Kinematics,
+    pub auto_bhop: bool,
 }
 
 impl Player {
@@ -20,6 +21,7 @@ impl Player {
         Self {
             camera: FirstPersonCamera::new(),
             kinematics: Kinematics::new(),
+            auto_bhop: false,
         }
     }
 
@@ -28,7 +30,13 @@ impl Player {
 
         let mut actions = Vec::new();
 
-        if is_key_pressed(KeyCode::Space) {
+        let try_jump = if self.auto_bhop {
+            is_key_down(KeyCode::Space)
+        } else {
+            is_key_pressed(KeyCode::Space)
+        };
+
+        if try_jump {
             let speed = self.kinematics.telemetry.current_speed;
             if self.kinematics.jump() {
                 actions.push(PlayerAction::Jumped { speed });

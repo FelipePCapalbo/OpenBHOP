@@ -24,6 +24,14 @@ impl GameState {
         }
     }
 
+    pub fn pre_frame_update(&mut self) {
+        self.input.update_frame_events();
+
+        if is_key_pressed(KeyCode::F) {
+            self.player.auto_bhop = !self.player.auto_bhop;
+        }
+    }
+
     pub fn update(&mut self, delta_time: f32) {
         self.input.handle_input(delta_time);
 
@@ -66,6 +74,7 @@ impl GameState {
             self.player.kinematics.position, 
             self.player.kinematics.speed,
             self.player.camera.front,
+            self.player.auto_bhop,
         );
     }
 }

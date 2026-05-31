@@ -21,14 +21,15 @@ impl InputService {
         }
     }
 
-    pub fn handle_input(&mut self, _delta_time: f32) {
-
+    pub fn update_frame_events(&mut self) {
         if is_key_pressed(KeyCode::Tab) {
             self.cursor_grabbed = !self.cursor_grabbed;
             set_cursor_grab(self.cursor_grabbed);
             show_mouse(!self.cursor_grabbed);
         }
+    }
 
+    pub fn handle_input(&mut self, _delta_time: f32) {
         let current_mouse: Vec2 = mouse_position().into();
         if self.cursor_grabbed {
             self.mouse_delta = current_mouse - self.last_mouse_position;

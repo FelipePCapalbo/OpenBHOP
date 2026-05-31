@@ -23,6 +23,8 @@ async fn main() {
     loop {
         if is_key_pressed(KeyCode::Escape) { break; }
 
+        game.pre_frame_update();
+
         accumulator += get_frame_time();
 
         // Limita acúmulo para evitar spiral of death em lag spikes

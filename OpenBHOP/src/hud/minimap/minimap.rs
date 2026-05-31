@@ -4,7 +4,7 @@ use std::fs::File;
 use std::io::Read;
 use crate::config::{CELL_SIZE, VISITED_CELLS_FILE};
 
-const MAP_SIZE: f32 = 160.0;
+pub const MAP_SIZE: f32 = 160.0;
 const MAP_SCALE: f32 = 4.0; 
 
 pub struct Minimap {
@@ -34,9 +34,11 @@ impl Minimap {
         self.visited_cells.insert((cell_x, cell_z));
     }
 
-    pub fn draw(&self, player_position: Vec3, offset_x: f32, offset_y: f32) {
-        let map_x = screen_width() - MAP_SIZE - 30.0 + offset_x;
-        let map_y = 60.0 + offset_y;
+    pub fn visited_cells_count(&self) -> usize {
+        self.visited_cells.len()
+    }
+
+    pub fn draw(&self, player_position: Vec3, map_x: f32, map_y: f32) {
 
         let center_x = map_x + MAP_SIZE / 2.0;
         let center_y = map_y + MAP_SIZE / 2.0;

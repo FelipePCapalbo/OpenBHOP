@@ -43,6 +43,7 @@ pub const VISITED_CELLS_FILE: &str = "bin/visited_cells.bin";
 // Parâmetros do efeito bolha e distorção lateral da HUD
 pub const HUD_MAX_SWAY: f32 = 10.0;             // Deslocamento máximo lateral/vertical da HUD (em pixels)
 pub const HUD_BOBBLE_AMPLITUDE: f32 = 2.0;      // Amplitude máxima do efeito bolha (em porcentagem de expansão)
+pub const HUD_FRAME_PADDING: f32 = 50.0;        // Distância relativa do limite extremo da janela para a HUD
 
 // ─── Volume dos sons  ───────────────────────────────────────────────────────
 pub const JUMP_SOUND_VOLUME: f32 = 0.30;         // Volume do som de pulo (escala aplicada ao volume calculado por pitch)
