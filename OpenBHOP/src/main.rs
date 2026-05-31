@@ -8,6 +8,7 @@ mod hud;
 mod audio;
 mod game;
 
+use config::TICK_DELTA;
 use game::GameState;
 
 fn get_game_config() -> Conf {
@@ -17,15 +18,24 @@ fn get_game_config() -> Conf {
 #[macroquad::main(get_game_config)]
 async fn main() {
     let mut game = GameState::new().await;
+    let mut accumulator = 0.0_f32;
 
     loop {
         if is_key_pressed(KeyCode::Escape) { break; }
 
-        let delta_time = get_frame_time();
+        accumulator += get_frame_time();
 
-        game.update(delta_time);
+        // Limita acúmulo para evitar spiral of death em lag spikes
+        if accumulator > 0.1 {
+            accumulator = 0.1;
+        }
+
+        while accumulator >= TICK_DELTA {
+            game.update(TICK_DELTA);
+            accumulator -= TICK_DELTA;
+        }
+
         game.draw();
-
         next_frame().await
     }
 }

@@ -1,8 +1,33 @@
 use macroquad::prelude::Conf;
 
-pub const LOOK_SPEED: f32 = 0.0016;
-pub const GRAVITY: f32 = -36.0;
-pub const JUMP_FORCE: f32 = 12.0;
+// ─── Parâmetros ajustáveis (1.0 = padrão) ───────────────────────────────────
+pub const SENSITIVITY: f32 = 1.0;       // Sensibilidade do mouse (ex: 0.5 = metade, 2.0 = dobro)
+pub const GRAVITY_SCALE: f32 = 1.0;     // Intensidade da gravidade
+pub const JUMP_SCALE: f32 = 1.0;        // Força do pulo
+
+// ─── Valores base internos ──────────────────────────────────────────────────
+// Fator de conversão entre pixels de delta do mouse e radianos de rotação da câmera.
+// Empiricamente tunado: com ~1333 pixels de largura de tela e DPI padrão, uma volta
+// de 360° exige ~2500px de movimento — sensação equivalente ao padrão de jogos FPS.
+const BASE_LOOK_SPEED: f32 = 0.00075;
+
+// Gravidade em unidades/s². ~3.7× a gravidade terrestre (9.8 m/s²), tunado para
+// replicar o feeling do motor GoldSrc (Half-Life/CS 1.6), onde a gravidade padrão
+// é 800 ups² na escala de unidades daquele engine (1 unidade ≈ 1.9 cm).
+const BASE_GRAVITY: f32 = -36.0;
+
+// Velocidade vertical inicial do pulo em unidades/s. Com BASE_GRAVITY = -36,
+// a altura máxima é v²/(2g) = 144/72 ≈ 2.0 unidades e o tempo de queda é
+// 2v/g ≈ 0.67s — proporcional ao pulo do GoldSrc e adequado para BHOP.
+const BASE_JUMP_FORCE: f32 = 12.0;
+
+// ─── Constantes derivadas (usadas pelo engine) ──────────────────────────────
+pub const LOOK_SPEED: f32 = BASE_LOOK_SPEED * SENSITIVITY;
+pub const GRAVITY: f32 = BASE_GRAVITY * GRAVITY_SCALE;
+pub const JUMP_FORCE: f32 = BASE_JUMP_FORCE * JUMP_SCALE;
+
+pub const TICK_RATE: f32 = 128.0;
+pub const TICK_DELTA: f32 = 1.0 / TICK_RATE;
 
 // Constantes físicas para movimentação no estilo Half-Life (GoldSrc)
 pub const MAX_SPEED: f32 = 9.0;             // Velocidade máxima de caminhada por segundo
