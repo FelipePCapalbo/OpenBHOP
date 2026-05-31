@@ -35,8 +35,8 @@ impl GameState {
     pub fn update(&mut self, delta_time: f32) {
         self.input.handle_input(delta_time);
 
-        // Avança o metrônomo antes de processar ações do jogador
-        self.audio.update_metronome(delta_time);
+        // Avança o metrônomo e a playlist de música antes de processar ações do jogador
+        self.audio.update(self.player.kinematics.telemetry.current_speed, delta_time);
         
         for action in self.player.update(&self.input, delta_time) {
             match action {
@@ -75,6 +75,7 @@ impl GameState {
             self.player.kinematics.speed,
             self.player.camera.front,
             self.player.auto_bhop,
+            self.audio.current_track_name(),
         );
     }
 }

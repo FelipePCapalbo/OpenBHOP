@@ -34,7 +34,7 @@ impl Hud {
         self.minimap.update(player_position);
     }
 
-    pub fn draw(&self, position: Vec3, player_speed_vec: Vec3, camera_front: Vec3, auto_bhop: bool) {
+    pub fn draw(&self, position: Vec3, player_speed_vec: Vec3, camera_front: Vec3, auto_bhop: bool, current_track_name: Option<&str>) {
         let width = screen_width();
         let height = screen_height();
         
@@ -80,5 +80,12 @@ impl Hud {
         let cells_base_y = frame.bottom;
         let (vx, vy) = effects.apply(cells_base_x, cells_base_y);
         draw_text(&visited_text, vx, vy, 22.0, BLACK);
+
+        // Nome da track atualmente tocando alinhado ao canto inferior esquerdo do frame (na mesma altura das células visitadas)
+        if let Some(track_name) = current_track_name {
+            let track_text = format!("Playing: {}", track_name);
+            let (tx, ty) = effects.apply(frame.left, frame.bottom);
+            draw_text(&track_text, tx, ty, 22.0, Color::new(0.2, 0.6, 0.86, 1.0)); // Azul pastel
+        }
     }
 }
