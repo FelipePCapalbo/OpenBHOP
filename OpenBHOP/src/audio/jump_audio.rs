@@ -1,6 +1,7 @@
 use macroquad::audio::{load_sound_from_bytes, play_sound, PlaySoundParams, Sound};
 use macroquad::file::load_file;
 use std::f32::consts::FRAC_PI_2;
+use crate::config::JUMP_SOUND_VOLUME;
 
 pub struct JumpAudio {
     sounds: Vec<Sound>,
@@ -35,8 +36,8 @@ impl JumpAudio {
         let sub_index = (phase * self.steps_per_octave as f32).round() as usize;
         let base_index = sub_index + self.steps_per_octave;
 
-        let vol_sub = (phase * FRAC_PI_2).sin();
-        let vol_base = (phase * FRAC_PI_2).cos();
+        let vol_sub = (phase * FRAC_PI_2).sin() * JUMP_SOUND_VOLUME;
+        let vol_base = (phase * FRAC_PI_2).cos() * JUMP_SOUND_VOLUME;
 
         play_sound(
             &self.sounds[sub_index],

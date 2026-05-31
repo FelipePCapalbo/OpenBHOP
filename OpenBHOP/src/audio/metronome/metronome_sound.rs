@@ -1,7 +1,5 @@
 use macroquad::audio::{load_sound_from_bytes, play_sound, PlaySoundParams, Sound};
-
-/// Volume relativo ao restante dos sons do jogo (10 %).
-pub const METRONOME_VOLUME: f32 = 0.10;
+use crate::config::METRONOME_VOLUME;
 
 const TICK_DURATION_S: f32 = 0.015;
 const TICK_FREQ_MAIN: f32 = 1500.0;
@@ -16,13 +14,8 @@ pub struct MetronomeSound {
 
 impl MetronomeSound {
     pub async fn load() -> Self {
-        let tick_main = load_sound_from_bytes(&Self::build_wav(TICK_FREQ_MAIN))
-            .await
-            .expect("MetronomeSound: falha ao sintetizar tick principal");
-
-        let tick_sub = load_sound_from_bytes(&Self::build_wav(TICK_FREQ_SUB))
-            .await
-            .expect("MetronomeSound: falha ao sintetizar tick intermediário");
+        let tick_main = load_sound_from_bytes(&Self::build_wav(TICK_FREQ_MAIN)).await.unwrap();
+        let tick_sub  = load_sound_from_bytes(&Self::build_wav(TICK_FREQ_SUB)).await.unwrap();
 
         Self { tick_main, tick_sub }
     }

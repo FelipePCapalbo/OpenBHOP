@@ -2,7 +2,7 @@ use macroquad::prelude::Conf;
 
 // ─── Parâmetros ajustáveis (1.0 = padrão) ───────────────────────────────────
 pub const SENSITIVITY: f32 = 1.0;       // Sensibilidade do mouse (ex: 0.5 = metade, 2.0 = dobro)
-pub const GRAVITY_SCALE: f32 = 1.0;     // Intensidade da gravidade
+pub const GRAVITY_SCALE: f32 = 0.8;     // Intensidade da gravidade
 pub const JUMP_SCALE: f32 = 1.0;        // Força do pulo
 
 // ─── Valores base internos ──────────────────────────────────────────────────
@@ -14,14 +14,14 @@ const BASE_LOOK_SPEED: f32 = 0.00075;
 // Gravidade em unidades/s². ~3.7× a gravidade terrestre (9.8 m/s²), tunado para
 // replicar o feeling do motor GoldSrc (Half-Life/CS 1.6), onde a gravidade padrão
 // é 800 ups² na escala de unidades daquele engine (1 unidade ≈ 1.9 cm).
-const BASE_GRAVITY: f32 = -12.0;
+const BASE_GRAVITY: f32 = -36.0;
 
 // Velocidade vertical inicial do pulo em unidades/s. Com BASE_GRAVITY = -36,
 // a altura máxima é v²/(2g) = 144/72 ≈ 2.0 unidades e o tempo de queda é
 // 2v/g ≈ 0.67s — proporcional ao pulo do GoldSrc e adequado para BHOP.
 const BASE_JUMP_FORCE: f32 = 12.0;
 
-// ─── Constantes derivadas (usadas pelo engine) ──────────────────────────────
+// ─── Constantes derivadas (usadas pela engine) ──────────────────────────────
 pub const LOOK_SPEED: f32 = BASE_LOOK_SPEED * SENSITIVITY;
 pub const GRAVITY: f32 = BASE_GRAVITY * GRAVITY_SCALE;
 pub const JUMP_FORCE: f32 = BASE_JUMP_FORCE * JUMP_SCALE;
@@ -43,6 +43,11 @@ pub const VISITED_CELLS_FILE: &str = "bin/visited_cells.bin";
 // Parâmetros do efeito bolha e distorção lateral da HUD
 pub const HUD_MAX_SWAY: f32 = 10.0;             // Deslocamento máximo lateral/vertical da HUD (em pixels)
 pub const HUD_BOBBLE_AMPLITUDE: f32 = 2.0;      // Amplitude máxima do efeito bolha (em porcentagem de expansão)
+
+// ─── Volume dos sons  ───────────────────────────────────────────────────────
+pub const JUMP_SOUND_VOLUME: f32 = 0.30;         // Volume do som de pulo (escala aplicada ao volume calculado por pitch)
+pub const METRONOME_VOLUME: f32 = 0.10;         // Volume do metrônomo relativo aos demais sons (10% por padrão)
+
 
 pub fn window_config() -> Conf {
     Conf {
