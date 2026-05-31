@@ -21,7 +21,7 @@ impl InputService {
         }
     }
 
-    pub fn handle_input(&mut self, delta_time: f32) {
+    pub fn handle_input(&mut self, _delta_time: f32) {
 
         if is_key_pressed(KeyCode::Tab) {
             self.cursor_grabbed = !self.cursor_grabbed;
@@ -31,7 +31,7 @@ impl InputService {
 
         let current_mouse: Vec2 = mouse_position().into();
         if self.cursor_grabbed {
-            self.mouse_delta = (current_mouse - self.last_mouse_position) * delta_time;
+            self.mouse_delta = current_mouse - self.last_mouse_position;
         } else {
             self.mouse_delta = Vec2::ZERO;
         }

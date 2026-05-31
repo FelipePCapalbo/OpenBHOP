@@ -8,9 +8,9 @@ impl JumpController {
         Self {}
     }
 
-    pub fn trigger_jump(&self, velocity: &mut Vec3, is_grounded: &mut bool) -> bool {
+    pub fn trigger_jump(&self, speed: &mut Vec3, is_grounded: &mut bool) -> bool {
         if *is_grounded {
-            velocity.y = JUMP_FORCE;
+            speed.y = JUMP_FORCE;
             *is_grounded = false;
             true
         } else {

@@ -1,8 +1,8 @@
 use macroquad::prelude::Conf;
 
-pub const LOOK_SPEED: f32 = 0.1;
-pub const GRAVITY: f32 = -0.01;
-pub const JUMP_FORCE: f32 = 0.2;
+pub const LOOK_SPEED: f32 = 0.0016;
+pub const GRAVITY: f32 = -36.0;
+pub const JUMP_FORCE: f32 = 12.0;
 
 // Constantes físicas para movimentação no estilo Half-Life (GoldSrc)
 pub const MAX_SPEED: f32 = 9.0;             // Velocidade máxima de caminhada por segundo

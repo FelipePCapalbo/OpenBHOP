@@ -8,10 +8,10 @@ pub struct HudEffects {
 }
 
 impl HudEffects {
-    pub fn new(velocity: Vec3, front: Vec3, width: f32, height: f32) -> Self {
+    pub fn new(speed: Vec3, front: Vec3, width: f32, height: f32) -> Self {
         Self {
-            sway_offset: sway::calculate_sway(velocity, front),
-            bubble_scale: bubble::calculate_bubble_scale(velocity.length()),
+            sway_offset: sway::calculate_sway(speed, front),
+            bubble_scale: bubble::calculate_bubble_scale(speed.length()),
             center: (width / 2.0, height / 2.0),
         }
     }

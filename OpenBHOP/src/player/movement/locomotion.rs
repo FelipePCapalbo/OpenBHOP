@@ -11,7 +11,7 @@ impl Locomotion {
     pub fn apply_horizontal_input(
         &self,
         position: &mut Vec3,
-        velocity: &mut Vec3,
+        speed: &mut Vec3,
         input_movement: Vec3,
         camera_front: Vec3,
         is_grounded: bool,
@@ -27,30 +27,30 @@ impl Locomotion {
 
         if is_grounded {
             // Aplicar atrito físico apenas quando estiver no chão
-            let speed = vec2(velocity.x, velocity.z).length();
-            if speed > 0.0 {
+            let speed_scalar = vec2(speed.x, speed.z).length();
+            if speed_scalar > 0.0 {
                 // Impede desaceleração excessivamente lenta em velocidades quase paradas
-                let control = if speed < 1.0 { 1.0 } else { speed };
+                let control = if speed_scalar < 1.0 { 1.0 } else { speed_scalar };
                 let drop = control * FRICTION * delta_time;
-                let mut new_speed = speed - drop;
+                let mut new_speed = speed_scalar - drop;
                 if new_speed < 0.0 {
                     new_speed = 0.0;
                 }
-                let scale = new_speed / speed;
-                velocity.x *= scale;
-                velocity.z *= scale;
+                let scale = new_speed / speed_scalar;
+                speed.x *= scale;
+                speed.z *= scale;
             }
 
             // Aceleração no chão
-            self.accelerate(velocity, wish_dir, MAX_SPEED, MAX_SPEED, GROUND_ACCEL, delta_time);
+            self.accelerate(speed, wish_dir, MAX_SPEED, MAX_SPEED, GROUND_ACCEL, delta_time);
         } else {
             // No ar, limitamos o wish_speed_cap para criar a clássica restrição de strafe do Half-Life,
             // mas mantemos o MAX_SPEED original para o cálculo da taxa de aceleração por segundo.
-            self.accelerate(velocity, wish_dir, MAX_SPEED, AIR_WISH_SPEED_CAP, AIR_ACCEL, delta_time);
+            self.accelerate(speed, wish_dir, MAX_SPEED, AIR_WISH_SPEED_CAP, AIR_ACCEL, delta_time);
         }
 
         // Calcula o deslocamento horizontal baseado na velocidade atualizada
-        let displacement = vec3(velocity.x * delta_time, 0.0, velocity.z * delta_time);
+        let displacement = vec3(speed.x * delta_time, 0.0, speed.z * delta_time);
 
         // Aplica o deslocamento à posição do jogador
         position.x += displacement.x;
@@ -62,7 +62,7 @@ impl Locomotion {
     // Função de aceleração genérica (Projeção e adição vetorial baseada no motor Source/GoldSrc)
     fn accelerate(
         &self,
-        velocity: &mut Vec3,
+        speed: &mut Vec3,
         wish_dir: Vec3,
         wish_speed: f32,
         wish_speed_cap: f32,
@@ -70,7 +70,7 @@ impl Locomotion {
         delta_time: f32,
     ) {
         // Projeção da velocidade horizontal atual na direção desejada
-        let current_speed = velocity.x * wish_dir.x + velocity.z * wish_dir.z;
+        let current_speed = speed.x * wish_dir.x + speed.z * wish_dir.z;
 
         // Quão abaixo da velocidade desejada limitada estamos
         let add_speed = wish_speed_cap - current_speed;
@@ -87,7 +87,7 @@ impl Locomotion {
         }
 
         // Adiciona a aceleração vetorial
-        velocity.x += wish_dir.x * accel_speed;
-        velocity.z += wish_dir.z * accel_speed;
+        speed.x += wish_dir.x * accel_speed;
+        speed.z += wish_dir.z * accel_speed;
     }
 }
