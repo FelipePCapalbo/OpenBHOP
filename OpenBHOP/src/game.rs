@@ -55,7 +55,8 @@ impl GameState {
         
         self.hud.draw(
             self.player.kinematics.position, 
-            self.player.kinematics.telemetry.current_speed
+            self.player.kinematics.velocity,
+            self.player.camera.front,
         );
     }
 }

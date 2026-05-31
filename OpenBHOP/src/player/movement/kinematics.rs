@@ -48,7 +48,7 @@ impl Kinematics {
         let was_grounded_prev = self.is_grounded;
 
         // Processa a movimentação horizontal (aceleração, atrito e integração de posição)
-        let displacement = self.locomotion.apply_horizontal_input(
+        self.locomotion.apply_horizontal_input(
             &mut self.position,
             &mut self.velocity,
             input_movement,
@@ -68,14 +68,7 @@ impl Kinematics {
             self.bhop_timer = BHOP_WINDOW_MS / 1000.0;
         }
 
-        let has_input = input_movement != Vec3::ZERO;
-        self.telemetry.update_speed(
-            displacement,
-            self.velocity.y,
-            delta_time,
-            self.is_grounded,
-            has_input,
-        );
+        self.telemetry.update_speed(self.velocity);
     }
 
     pub fn jump(&mut self) -> bool {

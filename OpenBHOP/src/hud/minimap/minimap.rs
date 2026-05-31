@@ -34,9 +34,9 @@ impl Minimap {
         self.visited_cells.insert((cell_x, cell_z));
     }
 
-    pub fn draw(&self, player_position: Vec3) {
-        let map_x = screen_width() - MAP_SIZE - 20.0;
-        let map_y = 50.0;
+    pub fn draw(&self, player_position: Vec3, offset_x: f32, offset_y: f32) {
+        let map_x = screen_width() - MAP_SIZE - 30.0 + offset_x;
+        let map_y = 60.0 + offset_y;
 
         let center_x = map_x + MAP_SIZE / 2.0;
         let center_y = map_y + MAP_SIZE / 2.0;

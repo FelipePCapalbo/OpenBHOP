@@ -15,6 +15,10 @@ pub const BHOP_WINDOW_MS: f32 = 200.0;      // Janela de tolerância em milisseg
 pub const CELL_SIZE: f32 = 2.0;
 pub const VISITED_CELLS_FILE: &str = "bin/visited_cells.bin";
 
+// Parâmetros do efeito bolha e distorção lateral da HUD
+pub const HUD_MAX_SWAY: f32 = 10.0;             // Deslocamento máximo lateral/vertical da HUD (em pixels)
+pub const HUD_BOBBLE_AMPLITUDE: f32 = 2.0;      // Amplitude máxima do efeito bolha (em porcentagem de expansão)
+
 pub fn window_config() -> Conf {
     Conf {
         window_title: String::from("OpenBHOP"),

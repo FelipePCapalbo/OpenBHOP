@@ -60,6 +60,17 @@ impl FloorGenerator {
         }
     }
 
+    // Retorna se um objeto em determinada posicao tridimensional global esta dentro de um chunk ativo na memoria
+    pub fn is_position_visible(&self, position: Vec3) -> bool {
+        let cell_x = (position.x / CELL_SIZE).floor() as i32;
+        let cell_z = (position.z / CELL_SIZE).floor() as i32;
+
+        let chunk_x = cell_x.div_euclid(CHUNK_SIZE);
+        let chunk_z = cell_z.div_euclid(CHUNK_SIZE);
+
+        self.active_chunks.contains(&(chunk_x, chunk_z))
+    }
+
     pub fn draw(&self, player_position: Vec3, player_direction: Vec3) {
         let view_direction_h = vec2(player_direction.x, player_direction.z).normalize_or_zero();
         let player_pos_h = vec2(player_position.x, player_position.z);

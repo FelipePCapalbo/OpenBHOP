@@ -9,14 +9,7 @@ impl Telemetry {
         Self { current_speed: 0.0 }
     }
 
-    pub fn update_speed(&mut self, displacement: Vec3, velocity_y: f32, delta_time: f32, is_grounded: bool, has_input: bool) {
-        let horizontal_speed = displacement.length() / delta_time;
-        
-        if is_grounded {
-            self.current_speed = if !has_input { 0.0 } else { horizontal_speed };
-        } else {
-            let vertical_speed = velocity_y / delta_time;
-            self.current_speed = vec2(horizontal_speed, vertical_speed).length();
-        }
+    pub fn update_speed(&mut self, player_speed: Vec3) {
+        self.current_speed = player_speed.length();
     }
 }
