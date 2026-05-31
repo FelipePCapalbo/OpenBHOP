@@ -2,16 +2,16 @@ use macroquad::audio::{load_sound_from_bytes, play_sound, PlaySoundParams, Sound
 use macroquad::file::load_file;
 use std::f32::consts::FRAC_PI_2;
 
-pub struct AudioService {
-    jump_sounds: Vec<Sound>,
+pub struct JumpAudio {
+    sounds: Vec<Sound>,
     steps_per_octave: usize,
 }
 
-impl AudioService {
+impl JumpAudio {
     pub async fn load() -> Self {
         let original_bytes = load_file("assets/audio/jump.wav").await.unwrap();
-        let mut jump_sounds = Vec::new();
-        
+        let mut sounds = Vec::new();
+
         let steps_per_octave = 20;
         let total_steps = steps_per_octave * 2;
 
@@ -19,16 +19,16 @@ impl AudioService {
             let pitch = 0.5 * 2.0_f32.powf(i as f32 / steps_per_octave as f32);
             let modified_bytes = Self::modify_wav_pitch(&original_bytes, pitch);
             let sound = load_sound_from_bytes(&modified_bytes).await.unwrap();
-            jump_sounds.push(sound);
+            sounds.push(sound);
         }
 
         Self {
-            jump_sounds,
+            sounds,
             steps_per_octave,
         }
     }
 
-    pub fn play_jump_sound(&self, speed: f32) {
+    pub fn play(&self, speed: f32) {
         let cycle_rate = 0.05;
         let phase = (speed.abs() * cycle_rate).fract();
 
@@ -39,7 +39,7 @@ impl AudioService {
         let vol_base = (phase * FRAC_PI_2).cos();
 
         play_sound(
-            &self.jump_sounds[sub_index],
+            &self.sounds[sub_index],
             PlaySoundParams {
                 looped: false,
                 volume: vol_sub,
@@ -47,7 +47,7 @@ impl AudioService {
         );
 
         play_sound(
-            &self.jump_sounds[base_index],
+            &self.sounds[base_index],
             PlaySoundParams {
                 looped: false,
                 volume: vol_base,

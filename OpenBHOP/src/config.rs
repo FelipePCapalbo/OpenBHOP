@@ -14,7 +14,7 @@ const BASE_LOOK_SPEED: f32 = 0.00075;
 // Gravidade em unidades/s². ~3.7× a gravidade terrestre (9.8 m/s²), tunado para
 // replicar o feeling do motor GoldSrc (Half-Life/CS 1.6), onde a gravidade padrão
 // é 800 ups² na escala de unidades daquele engine (1 unidade ≈ 1.9 cm).
-const BASE_GRAVITY: f32 = -36.0;
+const BASE_GRAVITY: f32 = -12.0;
 
 // Velocidade vertical inicial do pulo em unidades/s. Com BASE_GRAVITY = -36,
 // a altura máxima é v²/(2g) = 144/72 ≈ 2.0 unidades e o tempo de queda é
