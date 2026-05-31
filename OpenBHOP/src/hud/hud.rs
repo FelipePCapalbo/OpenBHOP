@@ -1,6 +1,8 @@
 use macroquad::prelude::*;
 use crate::hud::minimap::Minimap;
 use crate::hud::effects::HudEffects;
+use crate::hud::gorgonzoi::gorgonzoi_hud::GorgonzoiHud;
+use std::cell::RefCell;
 
 pub struct HudFrame {
     pub left: f32,
@@ -23,18 +25,22 @@ impl HudFrame {
 
 pub struct Hud {
     minimap: Minimap,
+    gorgonzoi: RefCell<GorgonzoiHud>,
 }
 
 impl Hud {
     pub fn new() -> Self {
-        Self { minimap: Minimap::new() }
+        Self { 
+            minimap: Minimap::new(),
+            gorgonzoi: RefCell::new(GorgonzoiHud::new()),
+        }
     }
 
     pub fn update(&mut self, player_position: Vec3) {
         self.minimap.update(player_position);
     }
 
-    pub fn draw(&self, position: Vec3, player_speed_vec: Vec3, camera_front: Vec3, auto_bhop: bool, current_track_name: Option<&str>) {
+    pub fn draw(&self, position: Vec3, player_speed_vec: Vec3, camera_front: Vec3, auto_bhop: bool, current_track_name: Option<&str>, bhop_combo_count: u32) {
         let width = screen_width();
         let height = screen_height();
         
@@ -87,5 +93,11 @@ impl Hud {
             let (tx, ty) = effects.apply(frame.left, frame.bottom);
             draw_text(&track_text, tx, ty, 22.0, Color::new(0.2, 0.6, 0.86, 1.0)); // Azul pastel
         }
+
+        // Gorgonzoi com partículas na HUD (acima das células visitadas)
+        let gorg_x = frame.right - 60.0;
+        let gorg_y = frame.bottom - 80.0;
+        let (gx, gy) = effects.apply(gorg_x, gorg_y);
+        self.gorgonzoi.borrow_mut().draw(gx, gy, bhop_combo_count);
     }
 }

@@ -47,11 +47,11 @@ pub const HUD_FRAME_PADDING: f32 = 50.0;        // Distância relativa do limite
 
 // ─── Volume dos sons  ───────────────────────────────────────────────────────
 pub const JUMP_SOUND_VOLUME: f32 = 0.30;         // Volume do som de pulo (escala aplicada ao volume calculado por pitch)
-pub const METRONOME_VOLUME: f32 = 0.10;         // Volume do metrônomo relativo aos demais sons (10% por padrão)
+pub const METRONOME_VOLUME: f32 = 0.30;         // Volume do metrônomo relativo aos demais sons (10% por padrão)
 
 // ─── Volume da música ───────────────────────────────────────────────────────
 pub const MUSIC_BASE_VOLUME: f32 = 0.20;         // Volume base da música (multiplicador)
-pub const MUSIC_MAX_VOLUME: f32 = 0.60;          // Volume máximo da música (multiplicador)
+pub const MUSIC_MAX_VOLUME: f32 = 0.50;          // Volume máximo da música (multiplicador)
 pub const MUSIC_FADE_DURATION: f32 = 2.0;       // Duração do fade in / fade out em segundos
 pub const MUSIC_VOLUME_LERP_SPEED: f32 = 2.0;   // Velocidade de suavização da transição de volume
 pub const MUSIC_MAX_VOLUME_SPEED: f32 = 2.0;   // Velocidade em que o volume atinge o valor máximo (0.6)

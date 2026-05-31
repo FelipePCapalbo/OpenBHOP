@@ -18,6 +18,7 @@ pub struct Kinematics {
     // Variáveis de controle para o Bunny Hopping (BHOP)
     pub bhop_timer: f32,                       // Contador regressivo de tolerância para o pulo de preservação (em segundos)
     pub saved_horizontal_speed: Vec3,       // Velocidade horizontal preservada antes de pousar
+    pub bhop_combo_count: u32,              // Contagem de pulos consecutivos no timing
 }
 
 impl Kinematics {
@@ -32,6 +33,7 @@ impl Kinematics {
             telemetry: Telemetry::new(),
             bhop_timer: 0.0,
             saved_horizontal_speed: Vec3::ZERO,
+            bhop_combo_count: 0,
         }
     }
 
@@ -68,6 +70,11 @@ impl Kinematics {
             self.bhop_timer = BHOP_WINDOW_MS / 1000.0;
         }
 
+        // Zera o combo se o jogador passar da janela de bhop no chão
+        if self.is_grounded && self.bhop_timer <= 0.0 {
+            self.bhop_combo_count = 0;
+        }
+
         self.telemetry.update_speed(self.speed);
     }
 
@@ -78,6 +85,10 @@ impl Kinematics {
                 self.speed.x = self.saved_horizontal_speed.x;
                 self.speed.z = self.saved_horizontal_speed.z;
                 self.bhop_timer = 0.0; // Consome o timer para evitar múltiplas preservações no mesmo ciclo
+                self.bhop_combo_count += 1;
+            } else {
+                // Primeiro pulo de uma sequência
+                self.bhop_combo_count = 1;
             }
             true
         } else {

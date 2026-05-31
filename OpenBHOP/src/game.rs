@@ -76,6 +76,7 @@ impl GameState {
             self.player.camera.front,
             self.player.auto_bhop,
             self.audio.current_track_name(),
+            self.player.kinematics.bhop_combo_count,
         );
     }
 }

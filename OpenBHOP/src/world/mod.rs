@@ -1,6 +1,6 @@
 pub mod environment;
 pub mod floor;
-pub mod objects;
+pub mod gorgonzoi;
 
 pub use environment::Environment;
-pub use objects::Gorgonzoi;
+pub use gorgonzoi::Gorgonzoi;
