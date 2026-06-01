@@ -1,1 +1,3 @@
 - Review hud gorgonzoi architecture;
+- Correct hud sway effect;
+- Improve hud bubble effect;
