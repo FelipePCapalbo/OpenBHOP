@@ -17,7 +17,13 @@ fn get_game_config() -> Conf {
 
 #[macroquad::main(get_game_config)]
 async fn main() {
-    let mut game = GameState::new().await;
+    let mut game = match GameState::new().await {
+        Ok(game) => game,
+        Err(error) => {
+            eprintln!("failed to start OpenBHOP: {error}");
+            return;
+        }
+    };
     let mut accumulator = 0.0_f32;
 
     loop {
