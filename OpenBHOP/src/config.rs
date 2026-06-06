@@ -40,21 +40,20 @@ pub const BHOP_WINDOW_MS: f32 = 200.0;      // Janela de tolerância em milisseg
 pub const CELL_SIZE: f32 = 2.0;
 pub const VISITED_CELLS_FILE: &str = "bin/visited_cells.bin";
 
-// Parâmetros do efeito bolha e distorção lateral da HUD
+// Parâmetros de distorção lateral da HUD
 pub const HUD_MAX_SWAY: f32 = 10.0;             // Deslocamento máximo lateral/vertical da HUD (em pixels)
-pub const HUD_BOBBLE_AMPLITUDE: f32 = 2.0;      // Amplitude máxima do efeito bolha (em porcentagem de expansão)
 pub const HUD_FRAME_PADDING: f32 = 50.0;        // Distância relativa do limite extremo da janela para a HUD
 
 // ─── Volume dos sons  ───────────────────────────────────────────────────────
 pub const JUMP_SOUND_VOLUME: f32 = 0.30;         // Volume do som de pulo (escala aplicada ao volume calculado por pitch)
-pub const METRONOME_VOLUME: f32 = 0.30;         // Volume do metrônomo relativo aos demais sons (10% por padrão)
+pub const METRONOME_VOLUME: f32 = 0.20;         // Volume do metrônomo relativo aos demais sons (10% por padrão)
 
 // ─── Volume da música ───────────────────────────────────────────────────────
-pub const MUSIC_BASE_VOLUME: f32 = 0.20;         // Volume base da música (multiplicador)
+pub const MUSIC_BASE_VOLUME: f32 = 0.10;         // Volume base da música (multiplicador)
 pub const MUSIC_MAX_VOLUME: f32 = 0.50;          // Volume máximo da música (multiplicador)
-pub const MUSIC_FADE_DURATION: f32 = 2.0;       // Duração do fade in / fade out em segundos
-pub const MUSIC_VOLUME_LERP_SPEED: f32 = 2.0;   // Velocidade de suavização da transição de volume
-pub const MUSIC_MAX_VOLUME_SPEED: f32 = 2.0;   // Velocidade em que o volume atinge o valor máximo (0.6)
+pub const MUSIC_FADE_DURATION: f32 = 1.0;       // Duração do fade in / fade out em segundos
+pub const MUSIC_VOLUME_LERP_SPEED: f32 = 1.0;   // Velocidade de suavização da transição de volume
+pub const MUSIC_MAX_VOLUME_SPEED: f32 = 0.50;   // Velocidade em que o volume atinge o valor máximo
 
 
 

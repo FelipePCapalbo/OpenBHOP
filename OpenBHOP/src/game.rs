@@ -30,6 +30,17 @@ impl GameState {
         if is_key_pressed(KeyCode::F) {
             self.player.auto_bhop = !self.player.auto_bhop;
         }
+
+        if is_key_pressed(KeyCode::E) {
+            let player_pos = self.player.kinematics.position;
+            let is_near = self.environment.gorgonzois.iter().any(|g| {
+                (g.position - player_pos).length() < 2.5
+            });
+            if is_near {
+                let current = crate::world::floor::colors::COLOR_MODE.load(std::sync::atomic::Ordering::Relaxed);
+                crate::world::floor::colors::COLOR_MODE.store((current + 1) % 3, std::sync::atomic::Ordering::Relaxed);
+            }
+        }
     }
 
     pub fn update(&mut self, delta_time: f32) {
@@ -54,10 +65,30 @@ impl GameState {
 
         self.environment.update(self.player.kinematics.position);
         self.hud.update(self.player.kinematics.position);
+
+        let speed = self.player.kinematics.speed.length();
+        crate::world::floor::colors::CURRENT_SPEED.store(
+            (speed * 1000.0) as u32,
+            std::sync::atomic::Ordering::Relaxed,
+        );
     }
 
     pub fn draw(&self) {
-        clear_background(LIGHTGRAY);
+        let mode = crate::world::floor::colors::COLOR_MODE.load(std::sync::atomic::Ordering::Relaxed);
+        match mode {
+            1 => clear_background(WHITE),
+            2 => {
+                let speed = crate::world::floor::colors::CURRENT_SPEED.load(std::sync::atomic::Ordering::Relaxed) as f32 / 1000.0;
+                // O matiz (hue) do céu varia continuamente com a velocidade
+                let sky_hue = (speed * 0.03) % 1.0;
+                // A luminosidade aumenta com a velocidade (começando escura e indo até um limite agradável de 0.25)
+                let lightness = (speed / 12.0).min(1.0) * 0.25;
+                
+                let sky_color = crate::world::floor::colors::hsl_to_rgb(sky_hue, 0.8, lightness);
+                clear_background(sky_color);
+            }
+            _ => clear_background(BLACK),
+        }
 
         set_camera(&Camera3D {
             position: self.player.kinematics.position,
@@ -77,6 +108,7 @@ impl GameState {
             self.player.auto_bhop,
             self.audio.current_track_name(),
             self.player.kinematics.bhop_combo_count,
+            &self.environment.visit_tracker,
         );
     }
 }

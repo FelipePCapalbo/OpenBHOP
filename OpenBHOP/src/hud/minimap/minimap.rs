@@ -1,45 +1,18 @@
 use macroquad::prelude::*;
-use std::collections::HashSet;
-use std::fs::File;
-use std::io::Read;
-use crate::config::{CELL_SIZE, VISITED_CELLS_FILE};
+use crate::config::CELL_SIZE;
+use crate::world::floor::{VisitTracker, get_visited_color};
 
 pub const MAP_SIZE: f32 = 160.0;
 const MAP_SCALE: f32 = 4.0; 
 
-pub struct Minimap {
-    visited_cells: HashSet<(i32, i32)>,
-}
+pub struct Minimap;
 
 impl Minimap {
     pub fn new() -> Self {
-        let mut visited_cells = HashSet::new();
-
-        if let Ok(mut file) = File::open(VISITED_CELLS_FILE) {
-            let mut buffer = [0u8; 8];
-            while file.read_exact(&mut buffer).is_ok() {
-                let cell_x = i32::from_le_bytes([buffer[0], buffer[1], buffer[2], buffer[3]]);
-                let cell_z = i32::from_le_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
-                visited_cells.insert((cell_x, cell_z));
-            }
-        }
-
-        Self { visited_cells }
+        Self
     }
 
-    pub fn update(&mut self, player_position: Vec3) {
-        let cell_x = (player_position.x / CELL_SIZE).floor() as i32;
-        let cell_z = (player_position.z / CELL_SIZE).floor() as i32;
-
-        self.visited_cells.insert((cell_x, cell_z));
-    }
-
-    pub fn visited_cells_count(&self) -> usize {
-        self.visited_cells.len()
-    }
-
-    pub fn draw(&self, player_position: Vec3, map_x: f32, map_y: f32) {
-
+    pub fn draw(&self, player_position: Vec3, map_x: f32, map_y: f32, visit_tracker: &VisitTracker) {
         let center_x = map_x + MAP_SIZE / 2.0;
         let center_y = map_y + MAP_SIZE / 2.0;
 
@@ -54,8 +27,8 @@ impl Minimap {
 
         let cell_screen_size = CELL_SIZE * MAP_SCALE;
 
-        // Desenha cada célula visitada
-        for &(cx, cz) in &self.visited_cells {
+        // Desenha cada célula visitada com a cor da escala de progresso obtida do VisitTracker
+        for (&(cx, cz), &count) in visit_tracker.all_visited_cells() {
             let cell_center_x = cx as f32 * CELL_SIZE + CELL_SIZE / 2.0;
             let cell_center_z = cz as f32 * CELL_SIZE + CELL_SIZE / 2.0;
 
@@ -86,7 +59,7 @@ impl Minimap {
                     clip_min_y,
                     clip_max_x - clip_min_x,
                     clip_max_y - clip_min_y,
-                    Color::new(0.45, 0.45, 0.45, 1.0),
+                    get_visited_color(count),
                 );
             }
         }

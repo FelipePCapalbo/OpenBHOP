@@ -36,18 +36,26 @@ impl Hud {
         }
     }
 
-    pub fn update(&mut self, player_position: Vec3) {
-        self.minimap.update(player_position);
+    pub fn update(&mut self, _player_position: Vec3) {
     }
 
-    pub fn draw(&self, position: Vec3, player_speed_vec: Vec3, camera_front: Vec3, auto_bhop: bool, current_track_name: Option<&str>, bhop_combo_count: u32) {
+    pub fn draw(
+        &self, 
+        position: Vec3, 
+        player_speed_vec: Vec3, 
+        camera_front: Vec3, 
+        auto_bhop: bool, 
+        current_track_name: Option<&str>, 
+        bhop_combo_count: u32,
+        visit_tracker: &crate::world::floor::VisitTracker,
+    ) {
         let width = screen_width();
         let height = screen_height();
         
         let speed_scalar = player_speed_vec.length();
 
         // Inicializa o gerenciador encapsulado para cuidar das transformações espaciais
-        let effects = HudEffects::new(player_speed_vec, camera_front, width, height);
+        let effects = HudEffects::new(player_speed_vec, camera_front);
 
         // Define a moldura (frame) delimitadora da HUD
         let frame = HudFrame::new(width, height);
@@ -77,10 +85,10 @@ impl Hud {
         let map_base_x = frame.right - crate::hud::minimap::minimap::MAP_SIZE;
         let map_base_y = frame.top + 30.0;
         let (mx, my) = effects.apply(map_base_x, map_base_y);
-        self.minimap.draw(position, mx, my);
+        self.minimap.draw(position, mx, my, visit_tracker);
 
         // Contador de células visitadas alinhado ao canto inferior direito do frame (e limite direito do minimapa)
-        let visited_text = format!("Visited cells: {}", self.minimap.visited_cells_count());
+        let visited_text = format!("Visited cells: {}", visit_tracker.visited_cells_count());
         let text_dim = measure_text(&visited_text, None, 22, 1.0);
         let cells_base_x = frame.right - text_dim.width;
         let cells_base_y = frame.bottom;

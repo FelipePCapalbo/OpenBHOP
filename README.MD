@@ -35,7 +35,9 @@ src/
 │   ├── environment.rs              # Environment geometry (renders grids and background).
 │   ├── floor/                      # Dynamic floor/terrain generation.
 │   │   ├── mod.rs                  # Module index.
-│   │   └── floor_generation.rs     # Generates platforms and track floor layout.
+│   │   ├── colors.rs               # Color logic for visited cells (normal, inverted, speed-based).
+│   │   ├── floor_generation.rs     # Generates platforms and track floor layout.
+│   │   └── visit_tracker.rs        # Tracks cell visitation frequency.
 │   └── gorgonzoi/                  # Gorgonzoi object/world mechanics.
 │       ├── mod.rs                  # Module index.
 │       ├── gorgonzoi.rs            # Renders the gorgonzoi entities/structures.
@@ -135,7 +137,17 @@ The terrain is rendered dynamically using a grid chunking system:
   $$(dx)^2 + (dz)^2 \leq R^2$$
 - Field-of-View (FOV) culling uses the dot product to discard cells behind the player:
   $$\vec{d}_{cell} \cdot \vec{d}_{view} \geq 0.15$$
-- Player path tracking is persisted in a binary file `visited_cells.bin` to mark cells as darker gray upon visitation.
+- Player path tracking is persisted in a binary file `visited_cells.bin` and mapped to dynamic color scales depending on the active color mode.
+
+### Painted Floor & Dynamic Color Modes
+To visualize cell visit frequency, the path is rendered using one of three color modes, cycled by pressing `E` when close to a Gorgonzoi structure:
+* **Normal**: Uses a dark sky and a standard RGB color progression ($R \to G \to B$) capping at white.
+* **Inverted**: Uses a white sky and an inverted color progression ($B \to G \to R$) capping at white.
+* **Speed-Based**: Sky and visited cell colors vary dynamically based on the player's current speed using a continuous HSL (Hue, Saturation, Lightness) color space mapping:
+  * Unvisited cells are white (`count == 0`), and immediately visited cells are black (`count == 1`).
+  * For subsequent visits ($count > 1$), saturation and lightness scale up to vibrant levels, and the hue cycles infinitely without capping at a single color:
+    $$\text{hue}_{cell} = (\text{steps} \cdot 0.04 + \text{speed} \cdot 0.015) \pmod{1.0}$$
+  * The sky's hue similarly shifts continuously with speed: $\text{hue}_{sky} = (\text{speed} \cdot 0.03) \pmod{1.0}$, with lightness scaling up with speed.
 
 ### Gorgonzoi Rendering
 The 3D Gorgonzoi are rendered procedurally:

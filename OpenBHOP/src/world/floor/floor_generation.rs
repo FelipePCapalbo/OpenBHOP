@@ -1,37 +1,21 @@
 use macroquad::prelude::*;
 use std::collections::HashSet;
-use std::fs::{create_dir_all, File, OpenOptions};
-use std::io::{Read, Write};
-use crate::config::{CELL_SIZE, VISITED_CELLS_FILE};
+use crate::config::CELL_SIZE;
+use super::{VisitTracker, get_visited_color};
 
 // Constantes para dimensionar a geração e otimização do chão
 const CHUNK_SIZE: i32 = 8;
-const CHUNK_VIEW_RADIUS: i32 = 3;
+const CHUNK_VIEW_RADIUS: i32 = 5;
 
 pub struct FloorGenerator {
     // Conjunto de coordenadas (cx, cz) dos chunks atualmente ativos na memória
     active_chunks: HashSet<(i32, i32)>,
-    // Conjunto global persistente de células visitadas pelo jogador
-    visited_cells: HashSet<(i32, i32)>,
 }
 
 impl FloorGenerator {
     pub fn new() -> Self {
-        let mut visited_cells = HashSet::new();
-
-        // Carrega as coordenadas visitadas do histórico binário
-        if let Ok(mut file) = File::open(VISITED_CELLS_FILE) {
-            let mut buffer = [0u8; 8];
-            while file.read_exact(&mut buffer).is_ok() {
-                let cell_x = i32::from_le_bytes([buffer[0], buffer[1], buffer[2], buffer[3]]);
-                let cell_z = i32::from_le_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
-                visited_cells.insert((cell_x, cell_z));
-            }
-        }
-
         Self {
             active_chunks: HashSet::new(),
-            visited_cells,
         }
     }
 
@@ -39,11 +23,6 @@ impl FloorGenerator {
         // Coordenadas da célula onde o jogador está pisando no grid
         let cell_x = (player_position.x / CELL_SIZE).floor() as i32;
         let cell_z = (player_position.z / CELL_SIZE).floor() as i32;
-
-        // Se o jogador acabou de pisar numa nova célula, persiste-a em disco
-        if self.visited_cells.insert((cell_x, cell_z)) {
-            self.persist_cell((cell_x, cell_z));
-        }
 
         // Chunk atual do jogador usando divisão euclidiana (evita falhas com negativos)
         let player_chunk_x = cell_x.div_euclid(CHUNK_SIZE);
@@ -71,7 +50,7 @@ impl FloorGenerator {
         self.active_chunks.contains(&(chunk_x, chunk_z))
     }
 
-    pub fn draw(&self, player_position: Vec3, player_direction: Vec3) {
+    pub fn draw(&self, player_position: Vec3, player_direction: Vec3, visit_tracker: &VisitTracker) {
         let view_direction_h = vec2(player_direction.x, player_direction.z).normalize_or_zero();
         let player_pos_h = vec2(player_position.x, player_position.z);
         let near_distance_threshold_sq = (CELL_SIZE * 1.5).powi(2);
@@ -98,13 +77,9 @@ impl FloorGenerator {
                         }
                     }
 
-                    // Define tom escuro para visitado e cinza claro para novo
-                    let is_visited = self.visited_cells.contains(&(cell_x, cell_z));
-                    let color = if is_visited {
-                        Color::new(0.35, 0.35, 0.35, 1.0)
-                    } else {
-                        Color::new(0.80, 0.80, 0.80, 1.0)
-                    };
+                    // Define a cor obtendo a contagem do VisitTracker
+                    let count = visit_tracker.get_count((cell_x, cell_z));
+                    let color = get_visited_color(count);
 
                     let draw_position = vec3(cell_center_x, 0.0, cell_center_z);
                     let size = vec3(CELL_SIZE - 0.04, 0.01, CELL_SIZE - 0.04);
@@ -112,21 +87,6 @@ impl FloorGenerator {
                     draw_cube(draw_position, size, None, color);
                 }
             }
-        }
-    }
-
-    fn persist_cell(&self, cell: (i32, i32)) {
-        // Garante que o diretório 'bin' exista antes de salvar o arquivo
-        let _ = create_dir_all("bin");
-        if let Ok(mut file) = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(VISITED_CELLS_FILE)
-        {
-            let mut buffer = [0u8; 8];
-            buffer[0..4].copy_from_slice(&cell.0.to_le_bytes());
-            buffer[4..8].copy_from_slice(&cell.1.to_le_bytes());
-            let _ = file.write_all(&buffer);
         }
     }
 }
