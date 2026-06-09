@@ -4,6 +4,7 @@ use crate::player::{Player, PlayerAction};
 use crate::audio::AudioService;
 use crate::world::Environment;
 use crate::hud::Hud;
+use crate::audio::playlist::PlaylistLoadError;
 
 pub struct GameState {
     pub player: Player,
@@ -14,14 +15,14 @@ pub struct GameState {
 }
 
 impl GameState {
-    pub async fn new() -> Self {
-        Self {
+    pub async fn new() -> Result<Self, PlaylistLoadError> {
+        Ok(Self {
             player: Player::new(),
             environment: Environment::new(),
             input: InputService::new(),
             hud: Hud::new(),
-            audio: AudioService::load().await,
-        }
+            audio: AudioService::load().await?,
+        })
     }
 
     pub fn pre_frame_update(&mut self) {

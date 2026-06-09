@@ -1,6 +1,6 @@
 use super::jump_audio::JumpAudio;
 use super::metronome::Metronome;
-use super::playlist::Playlist;
+use super::playlist::{Playlist, PlaylistLoadError};
 
 pub struct AudioService {
     jump: JumpAudio,
@@ -9,12 +9,12 @@ pub struct AudioService {
 }
 
 impl AudioService {
-    pub async fn load() -> Self {
-        Self {
+    pub async fn load() -> Result<Self, PlaylistLoadError> {
+        Ok(Self {
             jump: JumpAudio::load().await,
             metronome: Metronome::load().await,
-            playlist: Playlist::load().await,
-        }
+            playlist: Playlist::load().await?,
+        })
     }
 
     pub fn play_jump_sound(&self, speed: f32) {
